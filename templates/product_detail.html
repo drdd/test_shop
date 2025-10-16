@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} {{ site_name }}{% endblock %}
+
+{% block content %}
+<article class="product-detail">
+  <div class="product-card">
+    <div class="product-media">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+      {% else %}
+        <div class="product-image product-image--placeholder" aria-hidden="true">Изображение недоступно</div>
+      {% endif %}
+    </div>
+
+    <div class="product-info">
+      <h1 class="product-title">{{ product.name }}</h1>
+
+      <div class="product-price-availability">
+         {% if product.stock %}
+        <div class="product-price">
+          <span class="price-value">{% if product.price %}{{ product.price }} руб.{% else %}—{% endif %}</span>
+        </div>
+        {% endif %}
+        <div class="product-availability">
+          {% if product.stock %}
+            <span class="in-stock">В наличии</span>
+            {% if user.is_authenticated %}
+              <div style="margin-left: auto;">
+                <form action="{% url 'cart_add' product.id %}" method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <button class="btn-add">
+                    <span class="material-icons">add_shopping_cart </span>
+                  </button>
+                  </form>
+              </div>
+            {% endif %}
+          {% else %}
+            <span class="out-of-stock">Нет в наличии</span>
+          {% endif %}
+
+        </div>
+      </div>
+
+      <div class="product-description">
+        {% if product.description %}
+          {{ product.description }}
+        {% else %}
+          <p>Описание отсутствует.</p>
+        {% endif %}
+      </div>
+              <div class="product-actions">
+          <a href="{% url 'product_list' %}" class="btn btn-secondary">← К списку товаров</a>
+        </div>
+    </div>
+  </div>
+</article>
+{% endblock %}
