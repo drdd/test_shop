@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Товары{% endblock %}
+
+{% block content %}
+<div class="catalog-layout">
+  <!-- Боковая панель категорий -->
+  <aside class="sidebar">
+    <h4>Категории</h4>
+    <ul class="category-list">
+      <li>
+        <a href="{% url 'product_list' %}{% if query %}?q={{ query }}{% endif %}"
+           class="{% if not selected_category %}active{% endif %}">
+          Все
+        </a>
+      </li>
+      {% for category in categories %}
+        <li>
+          <a href="?category={{ category.id }}{% if query %}&q={{ query }}{% endif %}"
+             class="{% if selected_category == category.id %}active{% endif %}">
+            {{ category.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+    <!-- Основной контент -->
+  <section class="container">
+        <!-- Пагинация -->
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">«Первая</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">←</a>
+  {% endif %}
+
+  {# Показываем соседние номера: от current-2 до current+2 #}
+  {% for i in paginator.page_range %}
+    {% if i >= page_obj.number|add:-2 and i <= page_obj.number|add:2 %}
+      {% if i == page_obj.number %}
+        <span class="current">{{ i }}</span>
+      {% else %}
+        <a href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>
+      {% endif %}
+    {% elif i == 1 or i == paginator.num_pages %}
+      {# показываем первую и последнюю страницы всегда #}
+      <a href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>
+    {% elif i == page_obj.number|add:-3 or i == page_obj.number|add:3 %}
+      <span class="dots">…</span>
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">→</a>
+    <a href="?page={{ paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Последняя »</a>
+  {% endif %}
+  </div>
+
+
+
+    <!-- Сетка товаров -->
+    <div class="product-grid">
+      {% for product in products %}
+        <div class="product-card">
+          <div class="product-image">
+            <img src="{{ product.image.url|default:'/media/noimg.png' }}" alt="{{ product.name }}">
+          </div>
+          <h3>{{ product.name }}</h3>
+          <p class="price">{{ product.price }} руб.</p>
+          <a href="{% url 'product_detail' product.pk %}" class="btn">Подробнее</a>
+        </div>
+      {% empty %}
+        <p>Ничего не найдено.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Пагинация -->
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">«Первая</a>
+    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">←</a>
+  {% endif %}
+
+  {# Показываем соседние номера: от current-2 до current+2 #}
+  {% for i in paginator.page_range %}
+    {% if i >= page_obj.number|add:-2 and i <= page_obj.number|add:2 %}
+      {% if i == page_obj.number %}
+        <span class="current">{{ i }}</span>
+      {% else %}
+        <a href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>
+      {% endif %}
+    {% elif i == 1 or i == paginator.num_pages %}
+      {# показываем первую и последнюю страницы всегда #}
+      <a href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>
+    {% elif i == page_obj.number|add:-3 or i == page_obj.number|add:3 %}
+      <span class="dots">…</span>
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">→</a>
+    <a href="?page={{ paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}">Последняя »</a>
+  {% endif %}
+  </div>
+  </section>
+</div>
+{% endblock %}

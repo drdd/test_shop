@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h4 align="center"><a href="{% url 'product_list' %}">{{ site_name }}</a></h4>
+    {% if not header %}
+        {% if user.is_authenticated %}
+            <div>
+            <span>Привет, <b>{{ user.username }}</b> | <a href="{% url 'logout' %}">Выйти</a></span>
+            <a style="float:right" href="{% url 'cart_detail' %}">Корзина ({{ cart_total_items }})</a>
+            </div>
+        {% else %}
+            <a href="{% url 'login' %}">Войти</a> | <a href="{% url 'signup' %}">Регистрация</a>
+        {% endif %}
+    <p>
+    <!-- Поисковая строка -->
+    <form method="get" class="search-form">
+      <div class="search-bar">
+        <input type="text" name="q" placeholder="Поиск товаров..." value="{{ query|default:'' }}" class="search-input">
+        {% if selected_category %}
+          <input type="hidden" name="category" value="{{ selected_category }}">
+        {% endif %}
+        <button type="submit" class="material-btn" title="Найти">
+          <span class="material-icons">search</span>
+        </button>
+        {% if query %}
+          <a href="?{% if selected_category %}category={{ selected_category }}{% endif %}" class="material-btn cancel" title="Очистить">
+            <span class="material-icons">close</span>
+          </a>
+        {% endif %}
+      </div>
+    </form>
+   </p>
+  {% endif %}
+
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer" align="center"> <a href="https://github.com/drdd/test_shop" target="_blank"> DRDD&copy; 2025 Все права защищены. </a></footer>
+</body>
+</html>

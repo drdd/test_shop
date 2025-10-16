@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<div class="cart-page">
+<h1>Ваша корзина</h1>
+
+{% if cart_items %}
+<form method="post" action="{% url 'cart_update_all' %}">
+  {% csrf_token %}
+  {% for item in cart_items %}
+    <div class="cart-item">
+      <div class="item-info">
+        <h3>{{ item.product.name }}</h3>
+        <p class="price">Цена: {{ item.product.price }} ₽</p>
+
+        <label for="quantity_{{ item.product.id }}">Количество:</label>
+        <input type="number" name="quantity_{{ item.product.id }}" id="quantity_{{ item.product.id }}" value="{{ item.quantity }}" min="1">
+
+        <p class="total">Сумма: {{ item.total_price }} ₽</p>
+
+        <button type="submit" name="action" value="remove_{{ item.product.id }}" class="remove-btn">Удалить</button>
+      </div>
+    </div>
+  {% endfor %}
+
+  <div class="cart-summary">
+    <p><strong>Итого:</strong> {{ cart_total }} ₽</p>
+    <button type="submit" name="action" value="update" class="update-btn">Обновить корзину</button>
+  </div>
+</form>
+
+{% else %}
+  <p>Корзина пуста.</p>
+{% endif %}
+</div>
+{% endblock %}
